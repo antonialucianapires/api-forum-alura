@@ -7,6 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -16,7 +17,10 @@ import br.com.alura.forum.repositories.UsuarioRepository;
 
 public class AutenticacaoViaTokenFilter extends OncePerRequestFilter {
 	
+	@Autowired
 	private TokenService tokenService;
+	
+	@Autowired
 	private UsuarioRepository repository;
 
 	public AutenticacaoViaTokenFilter(TokenService tokenService, UsuarioRepository repository) {
