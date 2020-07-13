@@ -14,29 +14,35 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import br.com.alura.forum.repositories.UsuarioRepository;
+
+
 @EnableWebSecurity
 @Configuration
-public class SecurityConfigurations  extends WebSecurityConfigurerAdapter{
-	
+public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
+
 	@Autowired
 	private AutenticacaoService autenticacaoService;
 	
 	@Autowired
 	private TokenService tokenService;
 	
-	@Bean
+	@Autowired
+	private UsuarioRepository usuarioRepository;
+	
 	@Override
+	@Bean
 	protected AuthenticationManager authenticationManager() throws Exception {
 		return super.authenticationManager();
 	}
 	
-	//configuracoes de autenticacao
+	//Configuracoes de autenticacao
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(autenticacaoService).passwordEncoder(new BCryptPasswordEncoder());
 	}
 	
-	//configuacoes de autorizacao
+	//Configuracoes de autorizacao
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
@@ -44,17 +50,15 @@ public class SecurityConfigurations  extends WebSecurityConfigurerAdapter{
 		.antMatchers(HttpMethod.GET, "/topicos/*").permitAll()
 		.antMatchers(HttpMethod.POST, "/auth").permitAll()
 		.anyRequest().authenticated()
-		.and()
-		.csrf().disable()
+		.and().csrf().disable()
 		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-		.and()
-		.addFilterBefore(new AutenticacaoViaTokenFilter(tokenService), UsernamePasswordAuthenticationFilter.class);
+		.and().addFilterBefore(new AutenticacaoViaTokenFilter(tokenService, usuarioRepository), UsernamePasswordAuthenticationFilter.class);
 	}
 	
-	//configuracoes de recursos estaticos
+	
+	//Configuracoes de recursos estaticos(js, css, imagens, etc.)
 	@Override
 	public void configure(WebSecurity web) throws Exception {
-	
 	}
-
+	
 }
