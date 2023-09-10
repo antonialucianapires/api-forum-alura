@@ -18,9 +18,10 @@ import br.com.alura.forum.config.security.TokenService;
 import br.com.alura.forum.controller.form.LoginForm;
 import br.com.alura.forum.dto.TokenDto;
 
+import java.util.logging.Logger;
+
 @RestController
 @RequestMapping("/auth")
-@Profile(value= {"production", "test"})
 public class AutenticacaoController {
 	
 	@Autowired
@@ -41,6 +42,7 @@ public class AutenticacaoController {
 			return ResponseEntity.ok(new TokenDto(token, "Bearer"));
 			
 		} catch (AuthenticationException e) {
+			Logger.getLogger("AutenticacaoController").warning("Erro de autenticação: " + e.getMessage());
 			return ResponseEntity.badRequest().build();
 		}
 	
